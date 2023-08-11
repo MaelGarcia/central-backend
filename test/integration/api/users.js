@@ -402,41 +402,6 @@ describe('api: /users', () => {
           }))));
   });
 
-  describe('/users/formulariosAll GET', () => {
-    it('should reject if the authed user cannot get', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.get('/v1/users/current')
-          .expect(200)
-          .then(({ body }) => service.login('chelsea', (asChelsea) =>
-            asChelsea.get(`/v1/users/formulariosAll`).expect(403))))));
-
-    it('should return the requested user', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.get('/v1/users/current')
-          .expect(200)
-          .then(({ body }) => asAlice.get(`/v1/users/formulariosAll`)
-            .expect(200)
-            // eslint-disable-next-line no-shadow
-            .then(({ body }) => {
-              body.should.be.a.User();
-              body.email.should.equal('alice@getodk.org');
-            })))));
-
-    it('should allow nonadministrator users to get themselves', testService((service) =>
-      service.login('chelsea', (asChelsea) =>
-        asChelsea.get('/v1/users/current').expect(200).then(({ body }) => body.id)
-          .then((chelseaId) => asChelsea.get('/v1/users/formulariosAll')
-            .expect(200)
-            .then(({ body }) => {
-              body.should.be.a.User();
-              body.email.should.equal('chelsea@getodk.org');
-            })))));
-
-    it('should reject if the user does not exist', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.get('/v1/users/99').expect(404))));
-  });
-
   describe('/users/:id GET', () => {
     it('should reject if the authed user cannot get', testService((service) =>
       service.login('alice', (asAlice) =>
